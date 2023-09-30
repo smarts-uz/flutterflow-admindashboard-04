@@ -6,8 +6,8 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
+import 'dart:async';
 import 'package:aligned_dialog/aligned_dialog.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -171,23 +171,21 @@ class _MainMembersWidgetState extends State<MainMembersWidget> {
                                                 width: 2.0,
                                               ),
                                             ),
-                                            child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(2.0, 2.0, 2.0, 2.0),
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                                child: CachedNetworkImage(
-                                                  fadeInDuration: Duration(
-                                                      milliseconds: 500),
-                                                  fadeOutDuration: Duration(
-                                                      milliseconds: 500),
-                                                  imageUrl:
-                                                      'https://images.unsplash.com/photo-1624561172888-ac93c696e10c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NjJ8fHVzZXJzfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=900&q=60',
-                                                  width: 44.0,
-                                                  height: 44.0,
-                                                  fit: BoxFit.cover,
-                                                ),
+                                            child: InkWell(
+                                              splashColor: Colors.transparent,
+                                              focusColor: Colors.transparent,
+                                              hoverColor: Colors.transparent,
+                                              highlightColor:
+                                                  Colors.transparent,
+                                              onTap: () async {
+                                                context.pushNamed('addmember');
+                                              },
+                                              child: Icon(
+                                                Icons.add,
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .warning,
+                                                size: 35.0,
                                               ),
                                             ),
                                           ),
@@ -456,9 +454,12 @@ class _MainMembersWidgetState extends State<MainMembersWidget> {
                             ),
                           ),
                           FutureBuilder<List<UserRow>>(
-                            future: UserTable().queryRows(
-                              queryFn: (q) => q,
-                            ),
+                            future: (_model.requestCompleter ??=
+                                    Completer<List<UserRow>>()
+                                      ..complete(UserTable().queryRows(
+                                        queryFn: (q) => q,
+                                      )))
+                                .future,
                             builder: (context, snapshot) {
                               // Customize what your widget looks like when it's loading.
                               if (!snapshot.hasData) {
@@ -557,7 +558,10 @@ class _MainMembersWidgetState extends State<MainMembersWidget> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    listViewUserRow.name!,
+                                                    valueOrDefault<String>(
+                                                      listViewUserRow.name,
+                                                      'your name',
+                                                    ),
                                                     style: FlutterFlowTheme.of(
                                                             context)
                                                         .bodyLarge,
@@ -568,7 +572,10 @@ class _MainMembersWidgetState extends State<MainMembersWidget> {
                                                             .fromSTEB(0.0, 0.0,
                                                                 12.0, 0.0),
                                                     child: Text(
-                                                      listViewUserRow.email!,
+                                                      valueOrDefault<String>(
+                                                        listViewUserRow.email,
+                                                        'your email',
+                                                      ),
                                                       style:
                                                           FlutterFlowTheme.of(
                                                                   context)
@@ -597,10 +604,13 @@ class _MainMembersWidgetState extends State<MainMembersWidget> {
                                                     .fromSTEB(
                                                         0.0, 0.0, 12.0, 0.0),
                                                 child: Text(
-                                                  dateTimeFormat(
-                                                      'yQQQ',
-                                                      listViewUserRow
-                                                          .createdAt),
+                                                  valueOrDefault<String>(
+                                                    dateTimeFormat(
+                                                        'yQQQ',
+                                                        listViewUserRow
+                                                            .createdAt),
+                                                    'Sep 30, 2023',
+                                                  ),
                                                   style: FlutterFlowTheme.of(
                                                           context)
                                                       .bodyMedium,
@@ -618,7 +628,10 @@ class _MainMembersWidgetState extends State<MainMembersWidget> {
                                                 alignment: AlignmentDirectional(
                                                     -1.00, 0.00),
                                                 child: Text(
-                                                  listViewUserRow.title!,
+                                                  valueOrDefault<String>(
+                                                    listViewUserRow.title,
+                                                    'job',
+                                                  ),
                                                   style: FlutterFlowTheme.of(
                                                           context)
                                                       .bodyMedium,
@@ -630,40 +643,68 @@ class _MainMembersWidgetState extends State<MainMembersWidget> {
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
-                                                Container(
-                                                  decoration: BoxDecoration(
+                                                InkWell(
+                                                  splashColor:
+                                                      Colors.transparent,
+                                                  focusColor:
+                                                      Colors.transparent,
+                                                  hoverColor:
+                                                      Colors.transparent,
+                                                  highlightColor:
+                                                      Colors.transparent,
+                                                  onTap: () async {
+                                                    context.pushNamed(
+                                                      'editmember',
+                                                      queryParameters: {
+                                                        'edit': serializeParam(
+                                                          listViewUserRow,
+                                                          ParamType.SupabaseRow,
+                                                        ),
+                                                      }.withoutNulls,
+                                                    );
+                                                  },
+                                                  child: Icon(
+                                                    Icons.edit,
                                                     color: FlutterFlowTheme.of(
                                                             context)
-                                                        .accent3,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8.0),
-                                                    border: Border.all(
+                                                        .secondaryText,
+                                                    size: 24.0,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                          20.0, 0.0, 0.0, 0.0),
+                                                  child: InkWell(
+                                                    splashColor:
+                                                        Colors.transparent,
+                                                    focusColor:
+                                                        Colors.transparent,
+                                                    hoverColor:
+                                                        Colors.transparent,
+                                                    highlightColor:
+                                                        Colors.transparent,
+                                                    onTap: () async {
+                                                      await UserTable().delete(
+                                                        matchingRows: (rows) =>
+                                                            rows.eq(
+                                                          'id',
+                                                          listViewUserRow.id,
+                                                        ),
+                                                      );
+                                                      setState(() => _model
+                                                              .requestCompleter =
+                                                          null);
+                                                      await _model
+                                                          .waitForRequestCompleted();
+                                                    },
+                                                    child: Icon(
+                                                      Icons.delete_sharp,
                                                       color:
                                                           FlutterFlowTheme.of(
                                                                   context)
                                                               .tertiary,
-                                                    ),
-                                                  ),
-                                                  child: Align(
-                                                    alignment:
-                                                        AlignmentDirectional(
-                                                            0.00, 0.00),
-                                                    child: Padding(
-                                                      padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  8.0,
-                                                                  4.0,
-                                                                  8.0,
-                                                                  4.0),
-                                                      child: Text(
-                                                        'Viewer',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodySmall,
-                                                      ),
+                                                      size: 24.0,
                                                     ),
                                                   ),
                                                 ),

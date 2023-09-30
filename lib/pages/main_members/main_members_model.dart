@@ -6,9 +6,9 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
+import 'dart:async';
 import 'main_members_widget.dart' show MainMembersWidget;
 import 'package:aligned_dialog/aligned_dialog.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +29,7 @@ class MainMembersModel extends FlutterFlowModel<MainMembersWidget> {
   // State field(s) for ChoiceChips widget.
   List<String>? choiceChipsValues;
   FormFieldController<List<String>>? choiceChipsValueController;
+  Completer<List<UserRow>>? requestCompleter;
 
   /// Initialization and disposal methods.
 
@@ -45,4 +46,19 @@ class MainMembersModel extends FlutterFlowModel<MainMembersWidget> {
   /// Action blocks are added here.
 
   /// Additional helper methods are added here.
+
+  Future waitForRequestCompleted({
+    double minWait = 0,
+    double maxWait = double.infinity,
+  }) async {
+    final stopwatch = Stopwatch()..start();
+    while (true) {
+      await Future.delayed(Duration(milliseconds: 50));
+      final timeElapsed = stopwatch.elapsedMilliseconds;
+      final requestComplete = requestCompleter?.isCompleted ?? false;
+      if (timeElapsed > maxWait || (requestComplete && timeElapsed > minWait)) {
+        break;
+      }
+    }
+  }
 }

@@ -97,6 +97,18 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: 'messageDetails',
           path: '/messageDetails',
           builder: (context, params) => MessageDetailsWidget(),
+        ),
+        FFRoute(
+          name: 'addmember',
+          path: '/addmember',
+          builder: (context, params) => AddmemberWidget(),
+        ),
+        FFRoute(
+          name: 'editmember',
+          path: '/editmember',
+          builder: (context, params) => EditmemberWidget(
+            edit: params.getParam<UserRow>('edit', ParamType.SupabaseRow),
+          ),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );
